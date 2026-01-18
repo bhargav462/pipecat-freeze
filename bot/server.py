@@ -31,7 +31,6 @@ def start_bot():
         return {"status": "already_running", "pid": bot_process.pid}
     
     print("🚀 Spawning bot process...")
-    # Using python3 or python depending on system
     bot_process = subprocess.Popen(["python", "bot.py"], cwd=os.getcwd())
     return {"status": "started", "pid": bot_process.pid}
 
@@ -51,7 +50,7 @@ def stop_bot():
         bot_process.kill()
 
     bot_process = None
-    return {"status": "stopped"}
+    return {"status": "not_running"}
 
 @app.get("/sessions")
 def list_sessions():

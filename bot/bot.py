@@ -1,6 +1,5 @@
 import asyncio
 import os
-import sys
 import signal
 import time
 import json
@@ -24,7 +23,6 @@ load_dotenv()
 class SessionLogger:
     def __init__(self):
         self.session_id = str(int(time.time()))
-        # Ensure directory exists
         os.makedirs("recordings", exist_ok=True)
         self.filename = f"recordings/session_{self.session_id}.json"
         
@@ -61,7 +59,6 @@ class AudioSpeaker:
         self.p = pyaudio.PyAudio()
         self.stream = self.p.open(format=pyaudio.paInt16, channels=1, rate=44100, output=True)
         
-        # State for Freeze Detection
         self.is_active = False
         self.last_audio_time = 0
         self.should_freeze = False
@@ -143,7 +140,6 @@ class SpeakingGeminiLLM(FrameProcessor):
                 self.stt_end_time = time.time() # Start latency clock
                 self.logger.log_turn("user", text)
 
-                # Trigger Freeze
                 if "check" in text.lower():
                     self.speaker.should_freeze = True
                     self.logger.log_turn("system", "Freeze Triggered", is_freeze=True)
@@ -155,7 +151,6 @@ class SpeakingGeminiLLM(FrameProcessor):
                         latency = time.time() - self.stt_end_time
                         print(f"🤖 BOT: '{response.text}' (Latency: {latency:.2f}s)", flush=True)
                         
-                        # Log & Speak
                         self.logger.log_turn("bot", response.text, latency=latency)
                         await self.speaker.speak(response.text, self.session)
                 except Exception as e:
@@ -164,11 +159,9 @@ class SpeakingGeminiLLM(FrameProcessor):
 
         await super().process_frame(frame, direction)
 
-# --- MAIN ---
 async def main():
     print(f"BOT STARTED (Controlled by Server)", flush=True) 
     
-    # Init Components
     session_logger = SessionLogger()
     speaker = AudioSpeaker()
     
@@ -209,7 +202,7 @@ async def main():
         print("🔊 Bot Listening...", flush=True)
         runner_task = asyncio.create_task(runner.run(task))
         
-        await stop_event.wait() # Wait here until Server sends SIGTERM
+        await stop_event.wait() 
 
         print("⏳ Shutting down...", flush=True)
         monitor_task.cancel()
