@@ -1,10 +1,11 @@
-Pipecat Voice Agent with Freeze Detection
+# Pipecat Voice Agent with Freeze Detection
 
 This project implements a voice AI agent using the Pipecat framework, designed to demonstrate real-time interaction, latency tracking, and anomaly detection (freeze simulation).
 
 The system consists of a Python backend (FastAPI + Pipecat) for the agent logic and a Next.js frontend for session management and analysis.
 
-🚀 Features
+# 🚀 Features
+
 Real-time Voice Conversation: Low-latency interaction using Deepgram (STT), Gemini 2.5 Flash (LLM), and Cartesia (TTS).
 
 Latency Tracking: Measures and logs "Turn Latency" (User finish speaking -> Bot start speaking) for every turn.
@@ -17,7 +18,8 @@ Detection: A background monitor watches the audio stream. If the bot is "active"
 
 Session Dashboard: A Next.js UI to browse past sessions, view transcripts, and inspect performance metrics (latency, freeze events).
 
-🛠️ Architecture
+# 🛠️ Architecture
+
 Tech Stack
 Framework: Pipecat (Python)
 
