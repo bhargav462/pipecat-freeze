@@ -1,130 +1,105 @@
 # Pipecat Voice Agent with Freeze Detection
 
-This project implements a voice AI agent using the Pipecat framework, designed to demonstrate real-time interaction, latency tracking, and anomaly detection (freeze simulation).
+A real-time voice AI agent built using the Pipecat framework.  
+This project demonstrates turn-level latency tracking and detection of audio playback freezes during speech synthesis.
 
-The system consists of a Python backend (FastAPI + Pipecat) for the agent logic and a Next.js frontend for session management and analysis.
+---
 
-# 🚀 Features
+## Features
 
-Real-time Voice Conversation: Low-latency interaction using Deepgram (STT), Gemini 2.5 Flash (LLM), and Cartesia (TTS).
+- Real-time voice conversation
+  - STT: Deepgram
+  - LLM: Google Gemini 2.5 Flash
+  - TTS: Cartesia
+- Turn latency measurement (user stops speaking → bot starts speaking)
+- Audio freeze simulation via voice command
+- Automatic freeze detection during audio playback
+- Session dashboard for transcripts and performance metrics
 
-Latency Tracking: Measures and logs "Turn Latency" (User finish speaking -> Bot start speaking) for every turn.
+---
 
-Freeze Simulation & Detection:
+## Architecture
 
-Simulation: Triggered via voice command ("check"). The bot intentionally pauses audio playback mid-sentence for 5 seconds to mimic a network/process hang.
+### Backend
 
-Detection: A background monitor watches the audio stream. If the bot is "active" but no audio data flows for >3 seconds, it flags the event as a freeze.
+- Python
+- FastAPI
+- Pipecat
+- PyAudio (local audio playback)
 
-Session Dashboard: A Next.js UI to browse past sessions, view transcripts, and inspect performance metrics (latency, freeze events).
+### Frontend
 
-# 🛠️ Architecture
+- Next.js
+- Tailwind CSS
 
-Tech Stack
-Framework: Pipecat (Python)
+The backend runs the voice pipeline, tracks metrics, and logs sessions.  
+The frontend displays session history, transcripts, latency, and freeze events.
 
-STT: Deepgram
+---
 
-LLM: Google Gemini 2.5 Flash
+## Freeze Detection
 
-TTS: Cartesia (Sonic English)
+- The bot maintains an active state while generating or playing audio
+- Each audio chunk updates a heartbeat timestamp
+- If no audio is emitted for more than 3 seconds while active, a freeze event is detected and logged
 
-Backend API: FastAPI
+Freeze simulation can be triggered by saying "check", which pauses audio playback mid-sentence.
 
-Frontend: Next.js + Tailwind CSS
+---
 
-Audio Output: PyAudio (Local hardware streaming)
+## Session Logging
 
-Implementation Details
+Each session is saved as a JSON file containing:
 
-1. The Voice Pipeline
-   I structured the bot using Pipecat's pipeline paradigm. However, to support the specific requirements of "Freeze Simulation," I implemented a custom audio handler:
+- Conversation transcript
+- Turn latency per exchange
+- Detected freeze events with timestamps
 
-AudioSpeaker Class: Instead of using the standard Pipecat output transport, I built a custom audio engine using aiohttp and PyAudio. This gave me granular control to:
+---
 
-Inspect audio chunks in real-time.
+## Design Decisions
 
-Inject artificial delays (freezes) into the stream logic.
+- Cartesia HTTP API is used instead of WebSockets for improved local stability
+- Audio is played locally using PyAudio to simplify the demo and focus on pipeline behavior
 
-Monitor the "heartbeat" of the audio stream to detect anomalies.
+---
 
-2. Freeze Detection Logic
-   The freeze detection runs as a concurrent background task (monitor_freeze). It operates on a simple heuristic:
+## Setup and Running
 
-Active State: The bot signals it is currently processing/playing audio.
+### Prerequisites
 
-Heartbeat: Every time an audio chunk is written to the speaker, a timestamp is updated.
+- Python 3.10+
+- Node.js 18+
+- API keys for:
+  - Deepgram
+  - Google Gemini
+  - Cartesia
 
-Threshold: If Time.now - Last_Audio_Timestamp > 3.0 seconds while in an Active State, a Freeze Event is logged.
+---
 
-3. Session Logging
-   All conversation turns, including their timestamps, calculated latencies, and any detected freeze events, are serialized to JSON files in the recordings/ directory. These are served by the FastAPI backend to the Next.js frontend.
+### Backend Setup
 
-🧪 Testing & Validation
-I tested the solution primarily through manual interaction scenarios:
-
-Latency Check: Verified that the "Latency" metric in the logs matched the perceived delay. Gemini 2.5 Flash consistently delivered <2s latency.
-
-Freeze Scenario:
-
-Trigger: I used the prompt "Simulate freeze" during a conversation.
-
-Observation: The bot stopped speaking mid-sentence.
-
-Validation: Confirmed the console output 🚨 [UI ALERT] FREEZE DETECTED appeared after exactly 3 seconds of silence, and the event was correctly tagged in the session JSON.
-
-⚖️ Trade-offs & Decisions
-HTTP vs. Websockets for TTS: The assignment suggested using Cartesia Websockets. During implementation, I encountered persistent handshake timeouts and instability with the standard websocket transport on my local network. To ensure a reliable and robust demo, I switched to Cartesia's HTTP/REST API with chunked transfer encoding. This proved to be stable and offered comparable latency for this use case.
-
-Local Audio Transport: Since this is a local demo, I used PyAudio to play sound directly from the server device rather than streaming it to a browser client via WebRTC. This simplified the architecture while still fully proving the core logic of freeze detection.
-
-🔮 Future Improvements
-Database Integration: Move from JSON file storage to SQLite or PostgreSQL for better query capabilities.
-
-Real-time UI Updates: Implement a WebSocket connection between the Python backend and Next.js frontend to show the "Freeze Alert" on the dashboard instantly as it happens, rather than only in post-session analysis.
-
-📦 How to Run
-Prerequisites
-Python 3.10+
-
-Node.js 18+
-
-API Keys for: Deepgram, Google Gemini, Cartesia.
-
-1. Setup Backend <br>
-   Bash
-
-# Clone repo
-
-git clone [https://github.com/bhargav462/pipecat-freeze](https://github.com/bhargav462/pipecat-freeze) <br>
+```bash
+git clone https://github.com/bhargav462/pipecat-freeze
 cd bot
-
-# Install dependencies
-
 pip install -r requirements.txt
 
-# Create .env file
+# Create a .env file and add API keys
+python server.py
+```
 
-# Add your API keys to .env
+# Frontend Setup
 
-# Start Server
-
-1. python server.py
-
-2. Setup Frontend
-   Bash
-
+```
 cd ui
 npm install
 npm run dev
+```
 
-3. Usage
-   Open http://localhost:3000.
+### Usage
 
-Click Start Bot.
-
-Speak to the agent.
-
-Say "check" to test the freeze detection logic.
-
-Click Stop & Save to view the transcript and metrics.
+- Open http://localhost:3000
+- Click Start Bot
+- Speak with the agent
+- Say "check" to simulate an audio freeze
+- Click Stop & Save to view session metrics
