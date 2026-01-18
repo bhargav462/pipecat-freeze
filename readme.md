@@ -109,7 +109,7 @@ pip install -r requirements.txt
 
 # Start Server
 
-python server.py
+1. python server.py
 
 2. Setup Frontend
    Bash
