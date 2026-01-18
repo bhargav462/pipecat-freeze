@@ -1,0 +1,9 @@
+pipecat-ai[daily,google,deepgram,cartesia,silero]
+python-dotenv
+fastapi
+uvicorn
+loguru
+requests
+pyaudio
+aiohttp
+google.generativeai

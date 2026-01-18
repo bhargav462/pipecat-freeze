@@ -1,0 +1,48 @@
+# Environment variables
+.env
+.env.*
+
+# Python virtual environments
+env/
+venv/
+ENV/
+VENV/
+
+# Python compiled files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Dependencies
+node_modules/
+package-lock.json
+
+# Build outputs
+.next/
+dist/
+build/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+*.swp
+*.swo
+
+# Test and development files
+test.py
+test_gemini.py
+check_models.py
+client.html
+custom_processors.py
+text_speech.py
+
+# Version archive
+versions/
+
+# Runtime generated files
+recordings/
+sessions/
+server/recordings/
