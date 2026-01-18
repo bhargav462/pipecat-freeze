@@ -96,7 +96,7 @@ API Keys for: Deepgram, Google Gemini, Cartesia.
 
 # Clone repo
 
-git clone [<repo-url>](https://github.com/bhargav462/pipecat-freeze)
+git clone [https://github.com/bhargav462/pipecat-freeze](https://github.com/bhargav462/pipecat-freeze)
 cd bot
 
 # Install dependencies
