@@ -91,12 +91,12 @@ Node.js 18+
 
 API Keys for: Deepgram, Google Gemini, Cartesia.
 
-1. Setup Backend
+1. Setup Backend <br>
    Bash
 
 # Clone repo
 
-git clone [https://github.com/bhargav462/pipecat-freeze](https://github.com/bhargav462/pipecat-freeze)
+git clone [https://github.com/bhargav462/pipecat-freeze](https://github.com/bhargav462/pipecat-freeze) <br>
 cd bot
 
 # Install dependencies
